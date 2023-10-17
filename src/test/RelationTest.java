@@ -170,7 +170,7 @@ public class RelationTest {
 
 	    Relation relation = new Relation(tuples, td);
 
-	    // Projecting an empty list of fields should result in an empty relation
+	    //empty list of fields should result in empty relation!
 	    ArrayList<Integer> emptyFields = new ArrayList<>();
 	    Relation projectedRelation = relation.project(emptyFields);
 
