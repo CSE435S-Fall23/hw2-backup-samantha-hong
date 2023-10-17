@@ -16,12 +16,30 @@ import java.util.*;
 
 public class Catalog {
 	
+	private class TableInfo {
+		String tableName;
+		HeapFile fileName;
+		String primaryKeyField;
+
+		public TableInfo(HeapFile file, String name, String primaryKey) {
+			this.tableName = name;
+			this.fileName = file;
+			this.primaryKeyField = primaryKey;
+		}
+	}
+	
+	private Map<Integer, TableInfo> tableInfoMap;
+	private Map<String, TableInfo> associatedMaps;
+	
+	
     /**
      * Constructor.
      * Creates a new, empty catalog.
      */
     public Catalog() {
     	//your code here
+    	this.tableInfoMap = new HashMap<>();
+    	this.associatedMaps = new HashMap<>();
     }
 
     /**
@@ -34,8 +52,16 @@ public class Catalog {
      */
     public void addTable(HeapFile file, String name, String pkeyField) {
     	//your code here
+    	
+    	int tableId = file.getId(); // Generate table ID from HeapFile
+        //TupleDesc tupleDesc = file.getTupleDesc();
+        
+        TableInfo tableInfo = new TableInfo(file, name, pkeyField);
+        tableInfoMap.put(tableId, tableInfo);
+        associatedMaps.put(name, tableInfo);
+        
     }
-
+ 
     public void addTable(HeapFile file, String name) {
         addTable(file,name,"");
     }
@@ -46,8 +72,14 @@ public class Catalog {
      */
     public int getTableId(String name) {
     	//your code here
-    	return 0;
+    	for (Map.Entry<Integer, TableInfo> entry : tableInfoMap.entrySet()) {
+            if (entry.getValue().tableName.equals(name)) {
+                return entry.getKey();
+            }
+        }
+    	 throw new NoSuchElementException("Table with name '" + name + "' not found in the catalog. getTabId");
     }
+    
 
     /**
      * Returns the tuple descriptor (schema) of the specified table
@@ -56,7 +88,7 @@ public class Catalog {
      */
     public TupleDesc getTupleDesc(int tableid) throws NoSuchElementException {
     	//your code here
-    	return null;
+    	return tableInfoMap.get(tableid).fileName.getTupleDesc();
     }
 
     /**
@@ -67,27 +99,37 @@ public class Catalog {
      */
     public HeapFile getDbFile(int tableid) throws NoSuchElementException {
     	//your code here
-    	return null;
+    	return tableInfoMap.get(tableid).fileName;
     }
 
     /** Delete all tables from the catalog */
     public void clear() {
     	//your code here
+    	tableInfoMap.clear();
+    	associatedMaps.clear();
     }
 
     public String getPrimaryKey(int tableid) {
     	//your code here
-    	return null;
+    	TableInfo tableInfo = tableInfoMap.get(tableid);
+	    if (tableInfo == null) {
+	        throw new NoSuchElementException("Table with ID " + tableid + " not found in the catalog. getPrim");
+	    }
+	    return tableInfo.primaryKeyField;
     }
 
     public Iterator<Integer> tableIdIterator() {
     	//your code here
-    	return null;
+    	return tableInfoMap.keySet().iterator();
     }
 
     public String getTableName(int id) {
     	//your code here
-    	return null;
+    	TableInfo tableInfo = tableInfoMap.get(id);
+	    if (tableInfo == null) {
+	        throw new NoSuchElementException("Table with ID " + id + " not found in the catalog. getTabName");
+	    }
+	    return tableInfo.tableName;
     }
     
     /**
@@ -144,4 +186,3 @@ public class Catalog {
         }
     }
 }
-

@@ -1,7 +1,9 @@
+ 
 package hw1;
 
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.StringJoiner;
 
 /**
  * This class represents a tuple that will contain a single row's worth of information
@@ -15,13 +17,20 @@ public class Tuple {
 	 * Creates a new tuple with the given description
 	 * @param t the schema for this tuple
 	 */
+	private TupleDesc tupleDesc;
+	private int pageId;
+	private int tupleId;
+	private Field[] fieldVals;
+	
 	public Tuple(TupleDesc t) {
 		//your code here
+		this.tupleDesc = t;
+		this.fieldVals = new Field[t.numFields()];
 	}
 	
 	public TupleDesc getDesc() {
 		//your code here
-		return null;
+		return tupleDesc;
 	}
 	
 	/**
@@ -30,11 +39,12 @@ public class Tuple {
 	 */
 	public int getPid() {
 		//your code here
-		return 0;
+		return this.pageId;
 	}
 
 	public void setPid(int pid) {
 		//your code here
+		this.pageId = pid;
 	}
 
 	/**
@@ -43,15 +53,18 @@ public class Tuple {
 	 */
 	public int getId() {
 		//your code here
-		return 0;
+		return tupleId;
 	}
 
 	public void setId(int id) {
 		//your code here
+		this.tupleId = id;
 	}
 	
 	public void setDesc(TupleDesc td) {
 		//your code here;
+		this.tupleDesc = td;
+		this.fieldVals = new Field[td.numFields()];
 	}
 	
 	/**
@@ -61,11 +74,12 @@ public class Tuple {
 	 */
 	public void setField(int i, Field v) {
 		//your code here
+		this.fieldVals[i] = v;
 	}
 	
 	public Field getField(int i) {
 		//your code here
-		return null;
+		return this.fieldVals[i];
 	}
 	
 	/**
@@ -75,7 +89,11 @@ public class Tuple {
 	 */
 	public String toString() {
 		//your code here
-		return "";
+		  StringJoiner sj = new StringJoiner(", ");
+		    for (Field fieldValue : fieldVals) {
+		        sj.add(fieldValue.toString());
+		    }
+		    return sj.toString();
 	}
 }
 	

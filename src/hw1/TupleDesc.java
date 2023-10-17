@@ -1,3 +1,4 @@
+ 
 package hw1;
 import java.util.*;
 
@@ -9,7 +10,7 @@ public class TupleDesc {
 	private Type[] types;
 	private String[] fields;
 	
-    /**
+	/**
      * Create a new TupleDesc with typeAr.length fields with fields of the
      * specified types, with associated named fields.
      *
@@ -19,14 +20,16 @@ public class TupleDesc {
      */
     public TupleDesc(Type[] typeAr, String[] fieldAr) {
     	//your code here
+    	this.types = typeAr;
+    	this.fields = fieldAr;
     }
-
+	
     /**
      * @return the number of fields in this TupleDesc
      */
     public int numFields() {
         //your code here
-    	return 0;
+    	return this.fields.length;
     }
 
     /**
@@ -38,7 +41,11 @@ public class TupleDesc {
      */
     public String getFieldName(int i) throws NoSuchElementException {
         //your code here
-    	return null;
+    	return this.fields[i];
+    }
+    
+    public String[] copyFields() {
+    	return this.fields;
     }
 
     /**
@@ -50,7 +57,12 @@ public class TupleDesc {
      */
     public int nameToId(String name) throws NoSuchElementException {
         //your code here
-    	return 0;
+    	for (int i=0;i<numFields();++i) {
+    		if (this.fields[i].equals(name)) {
+    			return i;
+    		}
+    	}
+    	throw new NoSuchElementException("Element no exist");
     }
 
     /**
@@ -62,8 +74,21 @@ public class TupleDesc {
      */
     public Type getType(int i) throws NoSuchElementException {
         //your code here
-    	return null;
+    	return this.types[i];
     }
+    
+    //HW2 additions
+    
+    public Type[] copyTypes() {
+    	return this.types;
+    }
+    
+    
+    public int numTypes() {
+		return types.length;
+    }
+
+    
 
     /**
      * @return The size (in bytes) of tuples corresponding to this TupleDesc.
@@ -71,7 +96,19 @@ public class TupleDesc {
      */
     public int getSize() {
     	//your code here
-    	return 0;
+    	 int totalSize = 0;
+         for (int i = 0; i < numFields(); i++) {
+             Type type = types[i];
+             if (type == Type.INT) {
+                 totalSize += 4; //int 4 bytes
+             } else if (type == Type.STRING) {
+                 //string size
+           
+                 totalSize += 129;
+             }
+         }
+
+         return totalSize;
     }
 
     /**
@@ -84,12 +121,20 @@ public class TupleDesc {
      */
     public boolean equals(Object o) {
     	//your code here
-    	return false;
+    	if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TupleDesc other = (TupleDesc) o;
+
+
+        if (!Arrays.equals(types, other.types)) return false;
+        if (!Arrays.equals(fields, other.fields)) return false;
+
+        return true;
     }
     
 
     public int hashCode() {
-        // If you want to use TupleDesc as keys for HashMap, implement this so
+    	// If you want to use TupleDesc as keys for HashMap, implement this so
         // that equal objects have equals hashCode() results
         throw new UnsupportedOperationException("unimplemented");
     }
@@ -102,6 +147,19 @@ public class TupleDesc {
      */
     public String toString() {
         //your code here
-    	return "";
-    }
+    	 StringBuilder sb = new StringBuilder();
+         for (int i = 0; i < types.length; i++) {
+             sb.append(types[i]);
+             
+             if (fields[i] != null) {
+                 sb.append("(").append(fields[i]).append(")");
+             }
+             
+             if (i < types.length - 1) {
+                 sb.append(", ");
+             }
+         }
+         
+         return sb.toString();
+     }
 }

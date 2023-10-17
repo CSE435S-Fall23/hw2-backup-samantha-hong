@@ -18,7 +18,10 @@ import hw1.HeapFile;
 import hw1.IntField;
 import hw1.Relation;
 import hw1.RelationalOperator;
+import hw1.StringField;
+import hw1.Tuple;
 import hw1.TupleDesc;
+import hw1.Type;
 
 public class RelationTest {
 
@@ -94,7 +97,12 @@ public class RelationTest {
 		f.add(0);
 		n.add("b1");
 		
-		ar = ar.rename(f, n);
+		try {
+			ar = ar.rename(f, n);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		assertTrue(ar.getTuples().size() == 8);
 		assertTrue(ar.getDesc().getFieldName(0).equals("b1"));
@@ -123,5 +131,54 @@ public class RelationTest {
 		
 		assertTrue(ar.getTuples().size() == 4);
 	}
+	
+	
+	
+	@Test
+	public void testRenameEmptyNames() {
+	    Relation ar = new Relation(ahf.getAllTuples(), atd);
+
+	    ArrayList<Integer> fieldsToRename = new ArrayList<Integer>();
+	    fieldsToRename.add(0);
+
+	    ArrayList<String> emptyNames = new ArrayList<String>();
+	    emptyNames.add("");
+
+	    try {
+	        ar = ar.rename(fieldsToRename, emptyNames);
+	    } catch (Exception e) {
+	        fail("An exception should not be thrown when renaming with empty names.");
+	    }
+
+	    assertTrue(ar.getTuples().size() == 8);
+	    //see if field name not changed
+	    assertTrue(ar.getDesc().getFieldName(0).equals("a1"));
+	    assertTrue(ar.getDesc().getFieldName(1).equals("a2"));
+	    assertTrue(ar.getDesc().getSize() == 8);
+	}
+	
+	@Test
+	public void testProjectEmptyFields() {
+	    ArrayList<Tuple> tuples = new ArrayList<>();
+	    TupleDesc td = new TupleDesc(new Type[]{Type.INT, Type.STRING}, new String[]{"ID", "Name"});
+
+	    Tuple t1 = new Tuple(td);
+	    t1.setField(0, new IntField(1));
+	    t1.setField(1, new StringField("Alice"));
+
+	    tuples.add(t1);
+
+	    Relation relation = new Relation(tuples, td);
+
+	    // Projecting an empty list of fields should result in an empty relation
+	    ArrayList<Integer> emptyFields = new ArrayList<>();
+	    Relation projectedRelation = relation.project(emptyFields);
+
+	    assertEquals(0, projectedRelation.getTuples().size());
+	    assertEquals(0, projectedRelation.getDesc().getSize());
+	}
+
+	
+	
 
 }
