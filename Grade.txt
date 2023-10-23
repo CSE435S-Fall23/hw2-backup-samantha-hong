@@ -1,0 +1,4 @@
+Wrong result in aggregate MAX/MIN for int. Does not support aggregate MAX/MIN on String.(-4)
+Query does not support SQL keyword AS. (-5)
+
+Grade: 91/100
